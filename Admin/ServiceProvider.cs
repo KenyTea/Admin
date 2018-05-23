@@ -11,6 +11,8 @@ namespace Admin.lib.Modules
     {
         List<Provider> Providers = new List<Provider>();
 
+        List<int> ProvidersPrefix = new List<int>(); 
+
         public void AddProvider()
         {
             Provider prov = new Provider();
@@ -24,7 +26,7 @@ namespace Admin.lib.Modules
             prov.Procent = Double.Parse(Console.ReadLine());
 
 
-            Console.WriteLine("Enter LIst prefix");
+            Console.WriteLine("Enter LIst prefix" + "For exit press ENTER twis");
             bool exit = true;
             int pre = 0;
             do
@@ -35,9 +37,30 @@ namespace Admin.lib.Modules
                     prov.Prefix.Add(pre);
                 }
             }
-            while (!exit);
+            while (exit);
             
+            if (IsExistProvider(prov))
+            {
+                Providers.Add(prov);
+                ProvidersPrefix.AddRange(prov.Prefix);
+            }
+
         }
 
+        private bool IsExistProvider(Provider pro)
+        {
+            if (Providers.Where(w => w.NameCompany == pro.NameCompany).Count() > 0)
+            {
+                Console.WriteLine("Takoy provider uzhe est");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsExistPrefix(int pref)
+        {
+           if(ProvidersPrefix.Where(w => w.)
+
+        }
     }
 }
