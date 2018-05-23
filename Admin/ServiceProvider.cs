@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Admin.lib.Modules
 {
@@ -66,6 +67,39 @@ namespace Admin.lib.Modules
             }
             return true;
 
+        }
+
+        private void AddProvidetToXML(Provider pro)
+        {
+            XmlDocument doc = new XmlDocument();
+
+            XmlElement elem = doc.CreateElement("Provider");
+
+            XmlElement LogoURL = doc.CreateElement("LogoURL");
+            LogoURL.InnerText = pro.LigoURL;
+
+            XmlElement NameCompay = doc.CreateElement("NameCompany");
+            NameCompay.InnerText = pro.NameCompany;
+
+            XmlElement Procent = doc.CreateElement("Procent");
+            Procent.InnerText = pro.Procent.ToString();
+
+            XmlElement Prefixs = doc.CreateElement("Prefixs");
+            foreach (var item in pro.Prefix)
+            {
+                XmlElement Prefix = doc.CreateElement("Prefix");
+                Prefix.InnerText = item.ToString();
+                Prefixs.AppendChild(Prefix);
+            }
+
+            elem.AppendChild(LogoURL);
+            elem.AppendChild(NameCompay);
+            elem.AppendChild(Procent);
+            elem.AppendChild(Prefixs);
+
+            doc.AppendChild(elem);
+
+            doc.Save("Providers.xml");
         }
     }
 }
