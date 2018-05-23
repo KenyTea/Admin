@@ -98,8 +98,9 @@ namespace Admin.lib.Modules
             elem.AppendChild(Prefixs);
 
             doc.AppendChild(elem);
-
             doc.Save("Providers.xml");
+
+
         }
     }
 }
