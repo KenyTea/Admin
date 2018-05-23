@@ -32,7 +32,7 @@ namespace Admin.lib.Modules
             do
             {
                 exit = Int32.TryParse(Console.ReadLine(), out pre);
-                if (exit)
+                if (exit && IsExistPrefix(pre))
                 {
                     prov.Prefix.Add(pre);
                 }
@@ -59,7 +59,12 @@ namespace Admin.lib.Modules
 
         private bool IsExistPrefix(int pref)
         {
-           if(ProvidersPrefix.Where(w => w.)
+            if (ProvidersPrefix.Where(w => w == pref).Count() > 0)
+            {
+                Console.WriteLine("Takoy prefix est");
+                return false;
+            }
+            return true;
 
         }
     }
