@@ -14,8 +14,8 @@ namespace Admin
         {
 
             ServiceProvider sp = new ServiceProvider();
-
-            sp.AddProvider();
+           // sp.AddProvider();
+            sp.EditProvider();
         }
     }
 }

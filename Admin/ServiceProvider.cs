@@ -65,34 +65,50 @@ namespace Admin.lib.Modules
         {
             // 1 найти провайдера
             Console.WriteLine("Enter name provider");
-            string s = Console.ReadLine();
-            XmlNode xn = SearchProviderByName(s);
-            if(xn != null)
-            {
-                Console.WriteLine(xn.SelectSingleNode("NameCompany").InnerText);
-            }
-            else
-                Console.WriteLine("Provider not found");
+            SearchProviderByNameForEdit(Console.ReadLine());           
         }
+
         public void DeleteProvider()
         {
 
         }
 
-        public XmlElement SearchProviderByName(string name)
+        public void SearchProviderByNameForEdit(string name)
         {
             XmlDocument xd = GetDocument();
             XmlElement root = xd.DocumentElement;
 
+            bool find = false;
             foreach (XmlElement item in root)
             {
+                find = false;
                 foreach (XmlNode i in item.ChildNodes)
                 {
                     if (i.Name == "NameCompany" && i.InnerText == name)
-                        return item;
+                        find = true;
+                }
+                if (find)
+                {
+                    XmlElement el = Edit(item);
+                    break;
                 }
             }
-            return null;
+            if (find)
+                xd.Save(path);
+        }
+
+        private XmlElement Edit(XmlElement prov)
+        {
+            foreach (XmlElement item in prov.ChildNodes)
+            {
+                Console.WriteLine(item.Name + ": (" + item.InnerText + ") - ");
+                string cn = Console.ReadLine();
+                if (!string.IsNullOrEmpty(cn))
+                {
+                    item.InnerText = cn;
+                }
+            }
+            return prov;
         }
 
         private bool IsExistProvider(Provider pro)
@@ -142,15 +158,12 @@ namespace Admin.lib.Modules
             elem.AppendChild(NameCompay);
             elem.AppendChild(Procent);
             elem.AppendChild(Prefixs);
-
-            XmlElement root = doc.DocumentElement;
-            root.AppendChild(elem);
-
+            doc.DocumentElement.AppendChild(elem);
             doc.Save(path);
 
 
         }
-       
+
         private XmlDocument GetDocument()
         {
             XmlDocument xd = new XmlDocument();
