@@ -1,6 +1,7 @@
 ﻿using Admin.lib.Modules;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,18 @@ namespace Admin.lib.Modules
     {
         List<Provider> Providers = new List<Provider>();
 
-        List<int> ProvidersPrefix = new List<int>(); 
+        List<int> ProvidersPrefix = new List<int>();
+        private string path { get; set; }
+        public ServiceProvider() : this("")
+        {
+        }
+        public ServiceProvider(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                this.path = Path.Combine(@"\\dc\Студенты\ПКО\SEB-171.2\C#", "Operators.xml");
+            else
+                this.path = path;
+        }
 
         public void AddProvider()
         {
@@ -24,8 +36,8 @@ namespace Admin.lib.Modules
             Console.WriteLine("Enter Logo");
             prov.LigoURL = Console.ReadLine();
 
+            Console.WriteLine("Enter Prosent");
             prov.Procent = Double.Parse(Console.ReadLine());
-
 
             Console.WriteLine("Enter LIst prefix" + "For exit press ENTER twis");
             bool exit = true;
@@ -39,13 +51,48 @@ namespace Admin.lib.Modules
                 }
             }
             while (exit);
-            
+
             if (IsExistProvider(prov))
             {
                 Providers.Add(prov);
                 ProvidersPrefix.AddRange(prov.Prefix);
+                AddProvidetToXML(prov);
             }
 
+        }
+
+        public void EditProvider()
+        {
+            // 1 найти провайдера
+            Console.WriteLine("Enter name provider");
+            string s = Console.ReadLine();
+            XmlNode xn = SearchProviderByName(s);
+            if(xn != null)
+            {
+                Console.WriteLine(xn.SelectSingleNode("NameCompany").InnerText);
+            }
+            else
+                Console.WriteLine("Provider not found");
+        }
+        public void DeleteProvider()
+        {
+
+        }
+
+        public XmlNode SearchProviderByName(string name)
+        {
+            XmlDocument xd = GetDocument();
+            XmlElement root = xd.DocumentElement;
+
+            foreach (XmlElement item in root)
+            {
+                foreach (XmlNode i in item.ChildNodes)
+                {
+                    if (i.Name == "NameCompany" && i.InnerText == name)
+                        return i;
+                }
+            }
+            return null;
         }
 
         private bool IsExistProvider(Provider pro)
@@ -71,8 +118,7 @@ namespace Admin.lib.Modules
 
         private void AddProvidetToXML(Provider pro)
         {
-            XmlDocument doc = new XmlDocument();
-
+            XmlDocument doc = GetDocument();
             XmlElement elem = doc.CreateElement("Provider");
 
             XmlElement LogoURL = doc.CreateElement("LogoURL");
@@ -97,10 +143,38 @@ namespace Admin.lib.Modules
             elem.AppendChild(Procent);
             elem.AppendChild(Prefixs);
 
-            doc.AppendChild(elem);
-            doc.Save("Providers.xml");
+            XmlElement root = doc.DocumentElement;
+            root.AppendChild(elem);
+
+            doc.Save(path);
 
 
+        }
+       
+        private XmlDocument GetDocument()
+        {
+            XmlDocument xd = new XmlDocument();
+            // \\dc\Студенты\ПКО\SEB-171.2\C#
+
+
+            FileInfo fi = new FileInfo(path);
+            if (fi.Exists)
+            {
+                xd.Load(path);
+            }
+            else
+            {
+                ////1
+                //FileStream fs = fi.Create();
+                //fs.Close();
+
+                //2
+
+                XmlElement xl = xd.CreateElement("Providers");
+                xd.AppendChild(xl);
+                xd.Save(path);
+            }
+            return xd;
         }
     }
 }
