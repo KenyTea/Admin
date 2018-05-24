@@ -79,7 +79,7 @@ namespace Admin.lib.Modules
 
         }
 
-        public XmlNode SearchProviderByName(string name)
+        public XmlElement SearchProviderByName(string name)
         {
             XmlDocument xd = GetDocument();
             XmlElement root = xd.DocumentElement;
@@ -89,7 +89,7 @@ namespace Admin.lib.Modules
                 foreach (XmlNode i in item.ChildNodes)
                 {
                     if (i.Name == "NameCompany" && i.InnerText == name)
-                        return i;
+                        return item;
                 }
             }
             return null;
